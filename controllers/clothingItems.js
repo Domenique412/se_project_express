@@ -1,26 +1,18 @@
 const ClothingItem = require("../models/clothingItem");
+const { handleItemError, handleError } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageUrl, userId } = req.body;
+  const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl, owner: userId })
-    .then((item) => {
-      console.log(item);
-      res.send({ data: item });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
+    .then((item) => res.status(201).send(item))
+    .catch((err) => handleItemError(err, res));
 };
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send({ items }))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+    .then((items) => res.status(201).send({ items }))
+    .catch((err) => handleItemError(err, res));
 };
 
 const updateItem = (req, res) => {
@@ -28,11 +20,8 @@ const updateItem = (req, res) => {
   const { imageUrl } = req.body;
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .then((item) => res.status(200).send({ data: item }))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+    .then((item) => res.status(201).send(item))
+    .catch((err) => handleError(err, res));
 };
 
 const deleteItem = (req, res) => {
@@ -40,11 +29,8 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({ item }))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+    .then((item) => res.status(201).send(item))
+    .catch((err) => handleError(err, res));
 };
 
 const likeItem = (req, res) => {
@@ -54,12 +40,8 @@ const likeItem = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .then((item) => res.status(204).send({ item }))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: 'Like not added', err });
-
-    });
+    .then((item) => res.status(204).send(item))
+    .catch((err) => handleError(err, res));
 };
 
 
@@ -70,12 +52,8 @@ const deleteLikeItem = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((item) => res.status(204).send({ item }))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: 'Like stll there', err });
-
-    });
+    .then((item) => res.status(204).send(item))
+    .catch((err) => handleError(err, res));
 };
 
 

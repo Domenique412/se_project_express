@@ -5,10 +5,13 @@ const clothingItemsSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    minlength: 2,
+    maxlength: 30,
   },
   weather: {
     type: String,
     required: true,
+    enum: ['hot', 'warm', 'cold'],
   },
   imageUrl: {
     type: String,
@@ -19,9 +22,9 @@ const clothingItemsSchema = new mongoose.Schema({
     },
   },
   likes: {
-    type: [String], // Array of user IDs as strings
+    type: [String],
     default: [],
   },
 });
 
-module.exports = mongoose.model("clothingItems", clothingItemsSchema);
+module.exports = mongoose.model("clothingItem", clothingItemsSchema);
