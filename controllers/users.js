@@ -3,7 +3,7 @@ const { handleUserError, handleError } = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(201).send(users))
+    .then((users) => res.status(200).send(users))
     .catch((err) => handleUserError(err, res));
 };
 
@@ -16,7 +16,9 @@ const createUser = (req, res) => {
 };
 
 const getUserId = (req, res) => {
-  const { userId } = req.params.userId;
+  const { userId } = req.params;
+  console.log(req.params);
+
   User.findById(userId)
     .orFail()
     .then((user) => res.status(200).send(user))

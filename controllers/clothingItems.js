@@ -11,7 +11,7 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(201).send({ items }))
+    .then((items) => res.status(200).send(items))
     .catch((err) => handleItemError(err, res));
 };
 
@@ -29,7 +29,7 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(201).send(item))
+    .then((item) => res.status(200).send(item))
     .catch((err) => handleError(err, res));
 };
 
@@ -40,7 +40,7 @@ const likeItem = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .then((item) => res.status(204).send(item))
+    .then((item) => res.status(201).send(item))
     .catch((err) => handleError(err, res));
 };
 
@@ -52,7 +52,7 @@ const deleteLikeItem = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((item) => res.status(204).send(item))
+    .then((item) => res.status(200).send(item))
     .catch((err) => handleError(err, res));
 };
 
