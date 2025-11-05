@@ -1,31 +1,29 @@
-const ClothingItem = require('../models/clothingItem');
+const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
-  console.log(req)
-  console.log(req.body)
+  console.log(req);
+  console.log(req.body);
 
   const { name, weather, imageUrl } = req.body;
 
-  ClothingItem.create({ name, weather, imageUrl })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user_id })
     .then((item) => {
       console.log(item);
-      res.send({ data: item })
+      res.send({ data: item });
     })
     .catch((err) => {
-      console.log(err)
-      res.status(500).send({ message: err.message })
-    })
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
 };
-
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) =>
-      res.status(200).send({ items }))
+    .then((items) => res.status(200).send({ items }))
     .catch((err) => {
-      console.log(err)
-      res.status(500).send({ message: err.message })
-    })
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
 };
 
 const updateItem = (req, res) => {
@@ -33,15 +31,12 @@ const updateItem = (req, res) => {
   const { imageUrl } = req.body;
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .then((item) =>
-      res.status(200).send({ data: item }))
+    .then((item) => res.status(200).send({ data: item }))
     .catch((err) => {
-      console.log(err)
-      res.status(500).send({ message: err.message })
-    })
-
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
 };
-
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
@@ -49,12 +44,24 @@ const deleteItem = (req, res) => {
   console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) =>
-      res.status(204).send({ item }))
+    .then((item) => res.status(204).send({ item }))
     .catch((err) => {
-      console.log(err)
-      res.status(500).send({ message: err.message })
-    })
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
 };
 
-module.exports = { createItem, getItems, updateItem, deleteItem };
+const likeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((item) => res.status(204).send({ item }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
+};
+
+module.exports = { createItem, getItems, updateItem, deleteItem, likeItem };
