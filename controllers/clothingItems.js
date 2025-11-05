@@ -1,12 +1,9 @@
 const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
+  const { name, weather, imageUrl, userId } = req.body;
 
-  const { name, weather, imageUrl } = req.body;
-
-  ClothingItem.create({ name, weather, imageUrl, owner: req.user_id })
+  ClothingItem.create({ name, weather, imageUrl, owner: userId })
     .then((item) => {
       console.log(item);
       res.send({ data: item });
@@ -41,7 +38,6 @@ const updateItem = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
 
-  console.log(itemId);
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => res.status(204).send({ item }))
@@ -52,6 +48,7 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
+
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -60,8 +57,27 @@ const likeItem = (req, res) => {
     .then((item) => res.status(204).send({ item }))
     .catch((err) => {
       console.log(err);
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: 'Like not added', err });
+
     });
 };
 
-module.exports = { createItem, getItems, updateItem, deleteItem, likeItem };
+
+const deleteLikeItem = (req, res) => {
+
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
+    .then((item) => res.status(204).send({ item }))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ message: 'Like stll there', err });
+
+    });
+};
+
+
+
+module.exports = { createItem, getItems, updateItem, deleteItem, likeItem, deleteLikeItem };
