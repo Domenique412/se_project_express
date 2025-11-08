@@ -12,7 +12,6 @@ mongoose
   })
   .catch(console.error);
 
-const routes = require("./routes");
 
 app.use((req, res, next) => {
   req.user = {
@@ -20,8 +19,8 @@ app.use((req, res, next) => {
   };
   next();
 });
+
 app.use(express.json());
-app.use(routes);
 app.use("/", indexRouter);
 
 
