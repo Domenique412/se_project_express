@@ -59,4 +59,7 @@ module.exports = {
   handleUserError,
   handleItemError,
   FORBIDDEN_ERROR_CODE,
+  BAD_REQUEST_ERROR_CODE,
+  UNAUTHORIZED_ERROR_CODE,
+  NOT_FOUND_ERROR_CODE,
 };

@@ -16,8 +16,9 @@ mongoose
 
 
 app.use(express.json());
-app.use("/", indexRouter);
 app.use(cors());
+app.use("/", indexRouter);
+
 
 
 

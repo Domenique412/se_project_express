@@ -34,7 +34,7 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== userId.toString()) {
-        return res.status(403).send({ message: "Forbidden: You can only delete your own items" });
+        return res.status(FORBIDDEN_ERROR_CODE).send({ message: "Forbidden: You can only delete your own items" });
       }
 
       return ClothingItem.findByIdAndDelete(itemId);
