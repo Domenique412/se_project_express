@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { handleItemError, handleError } = require("../utils/errors");
+const { handleItemError, handleError, FORBIDDEN_ERROR_CODE } = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -28,12 +28,23 @@ const updateItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const userId = req.user._id;
 
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      if (item.owner.toString() !== userId.toString()) {
+        return res.status(403).send({ message: "Forbidden: You can only delete your own items" });
+      }
+
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
+    .then((deletedItem) => {
+      res.status(200).send(deletedItem);
+    })
     .catch((err) => handleError(err, res));
 };
+
 
 const likeItem = (req, res) => {
 
@@ -42,6 +53,7 @@ const likeItem = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
+    .orFail()
     .then((item) => res.status(201).send(item))
     .catch((err) => handleError(err, res));
 };
@@ -54,6 +66,7 @@ const deleteLikeItem = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => handleError(err, res));
 };

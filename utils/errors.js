@@ -1,6 +1,8 @@
 
-// Status code constants for DRY code
+
 const BAD_REQUEST_ERROR_CODE = 400;
+const UNAUTHORIZED_ERROR_CODE = 401;
+const FORBIDDEN_ERROR_CODE = 403;
 const NOT_FOUND_ERROR_CODE = 404;
 const CONFLICT_ERROR_CODE = 409;
 const INTERNAL_SERVER_ERROR_CODE = 500;
@@ -35,6 +37,10 @@ const handleUserError = (err, res) => {
     return res.status(CONFLICT_ERROR_CODE).send({ message: "User already exists" });
   }
 
+  if (err.message === "Incorrect email or password") {
+    return res.status(UNAUTHORIZED_ERROR_CODE).send({ message: "Incorrect email or password" });
+  }
+
   return handleError(err, res);
 };
 
@@ -51,5 +57,6 @@ const handleItemError = (err, res) => {
 module.exports = {
   handleError,
   handleUserError,
-  handleItemError
+  handleItemError,
+  FORBIDDEN_ERROR_CODE,
 };
