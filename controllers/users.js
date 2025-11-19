@@ -1,7 +1,7 @@
-const User = require("../models/user");
-const { handleUserError, handleError, BAD_REQUEST_ERROR_CODE } = require("../utils/errors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+const { handleUserError, handleError, BAD_REQUEST_ERROR_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
@@ -17,13 +17,13 @@ const createUser = (req, res) => {
     return res.status(BAD_REQUEST_ERROR_CODE).send({ message: "All fields are required" });
   }
 
-  bcrypt.hash(password, 10)
-    .then((hashedPassword) => {
-      return User.create({ name, avatar, email, password: hashedPassword });
-    })
+  return bcrypt.hash(password, 10)
+    .then((hashedPassword) => User.create({ name, avatar, email, password: hashedPassword })
+    )
     .then((user) => {
-      delete user._doc.password;
-      res.status(201).send(user);
+      const userObject = user.toObject();
+      delete userObject.password;
+      return res.status(201).send(userObject);
     })
     .catch((err) => handleUserError(err, res));
 };
@@ -63,14 +63,14 @@ const userLogin = (req, res) => {
     return res.status(BAD_REQUEST_ERROR_CODE).send({ message: "Email and password are required" });
   }
 
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
         JWT_SECRET,
         { expiresIn: "7d" }
       );
-      res.status(200).send({ token });
+      return res.status(200).send({ token });
     })
     .catch((err) => handleUserError(err, res));
 };
