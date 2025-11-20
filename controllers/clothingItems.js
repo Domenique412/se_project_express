@@ -37,10 +37,9 @@ const deleteItem = (req, res) => {
         return res.status(FORBIDDEN_ERROR_CODE).send({ message: "Forbidden: You can only delete your own items" });
       }
 
-      return ClothingItem.findByIdAndDelete(itemId);
-    })
-    .then((deletedItem) => {
-      res.status(200).send(deletedItem);
+      return ClothingItem
+        .findByIdAndDelete(itemId)
+        .then((deletedItem) => res.status(200).send(deletedItem));
     })
     .catch((err) => handleError(err, res));
 };
