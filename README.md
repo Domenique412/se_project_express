@@ -33,5 +33,5 @@ safely, while protecting sensitive data like passwords and personal information.
 
 ### Project Pitch Video
 
-Check out [this video](https://drive.google.com/file/d/1_A5BFqGtv7YF_WK2ohCvDGJVGYkjIGp4/view?usp=drive_link), where I describe my
+Check out [this video](https://drive.google.com/drive/folders/1bFI0EdKZmWWXQGPYok89d69pcN5icoFz?usp=sharing), where I describe my
 project and some challenges I faced while building it.
